@@ -121,7 +121,7 @@ if (${ENZYME_EXTERNAL_SHARED_LIB})
     target_link_libraries(Enzyme-${LLVM_VERSION_MAJOR} LLVM)
     install(TARGETS Enzyme-${LLVM_VERSION_MAJOR}
         EXPORT EnzymeTargets
-        LIBRARY DESTINATION lib COMPONENT shlib
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT shlib
         PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/Enzyme"
         COMPONENT dev)
 endif()
@@ -154,22 +154,22 @@ if (${LLVM_VERSION_MAJOR} GREATER 14)
     target_link_options(LLDEnzymeFlags INTERFACE "SHELL: -Wl,--load-pass-plugin=$<TARGET_FILE:LLDEnzyme-${LLVM_VERSION_MAJOR}>")
 endif()
 
-# this custom target exists to prevent CMake from incorrectly assuming that 
-# targets that link depend on LLDEnzyme-XX can be built at the same time or 
+# this custom target exists to prevent CMake from incorrectly assuming that
+# targets that link depend on LLDEnzyme-XX can be built at the same time or
 # before LLDEnzyme-XX has finished.
 add_custom_target(LLDEnzymeDummy "" DEPENDS LLDEnzyme-${LLVM_VERSION_MAJOR})
 add_dependencies(LLDEnzymeFlags LLDEnzymeDummy)
 endif()
 
 add_library(ClangEnzymeFlags INTERFACE)
-if(${LLVM_VERSION_MAJOR} GREATER 12) 
+if(${LLVM_VERSION_MAJOR} GREATER 12)
     target_compile_options(ClangEnzymeFlags INTERFACE "-fpass-plugin=$<TARGET_FILE:ClangEnzyme-${LLVM_VERSION_MAJOR}>")
 endif()
 target_compile_options(ClangEnzymeFlags INTERFACE "SHELL: -Xclang -load")
 target_compile_options(ClangEnzymeFlags INTERFACE "SHELL: -Xclang $<TARGET_FILE:ClangEnzyme-${LLVM_VERSION_MAJOR}>")
 
-# this custom target exists to prevent CMake from incorrectly assuming that 
-# targets that link depend on ClangEnzyme-XX can be built at the same time or 
+# this custom target exists to prevent CMake from incorrectly assuming that
+# targets that link depend on ClangEnzyme-XX can be built at the same time or
 # before ClangEnzyme-XX has finished.
 add_custom_target(ClangEnzymeDummy "" DEPENDS ClangEnzyme-${LLVM_VERSION_MAJOR})
 add_dependencies(ClangEnzymeFlags ClangEnzymeDummy)
@@ -181,20 +181,20 @@ install(TARGETS ClangEnzymeFlags EXPORT EnzymeTargets)
 
 install(TARGETS LLVMEnzyme-${LLVM_VERSION_MAJOR}
     EXPORT EnzymeTargets
-    LIBRARY DESTINATION lib COMPONENT shlib
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT shlib
     PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/Enzyme"
     COMPONENT dev)
 
 if (${Clang_FOUND})
 install(TARGETS ClangEnzyme-${LLVM_VERSION_MAJOR}
     EXPORT EnzymeTargets
-    LIBRARY DESTINATION lib COMPONENT shlib
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT shlib
     PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/Enzyme"
     COMPONENT dev)
 endif()
 install(TARGETS LLDEnzyme-${LLVM_VERSION_MAJOR}
     EXPORT EnzymeTargets
-    LIBRARY DESTINATION lib COMPONENT shlib
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT shlib
     PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/Enzyme"
     COMPONENT dev)
 
